@@ -31,6 +31,7 @@ module.exports = {
       .then((user) => res.json(user))
       .catch((err) => res.status(500).json(err));
   },
+  
   // Update a user
   updateUser(req, res) {
     User.findOneAndUpdate(
