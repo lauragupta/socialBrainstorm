@@ -10,15 +10,15 @@ module.exports = {
   },
   // Get a single user
   getSingleUser(req, res) {
-    User.findOne({ _id: req.params.userId })
+    User.findOne({ _id: req.params.id })
       .select('-__v')
       .then(async (user) =>
-        !student
+        !user
           ? res.status(404).json({ message: 'No user with that ID' })
           : res.json({
               user,
-              thought: await thought(req.params.userId),
-              friends: await friends(req.params.userId)
+              thought: await thought(req.params.thought_id),
+              friends: await friends(req.params.id)
             })
       )
       .catch((err) => {
@@ -42,7 +42,7 @@ module.exports = {
       .then((user) =>
         !user
           ? res.status(404).json({ message: 'No user with this ID!' })
-          : res.json(course)
+          : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
   },
@@ -50,13 +50,17 @@ module.exports = {
   // Delete a user 
   deleteUser(req, res) {
     User.findOneAndRemove({ _id: req.params.userId })
-      .then((user) =>
-        !user
+      .then((user) => {
+        const result = !user
           ? res.status(404).json({ message: 'No such user exists with that ID' })
-          : Thought.deleteMany({ _id: { $in: thought.users } })
-      )
+          : Thought.deleteMany({ 
+            _id: { 
+              $in: user.thoughts 
+            }})
+        return result
+      })
       .then((user) =>
-        !thought
+        !user.thoughts
           ? res.status(404).json({
               message: 'User deleted, but no thoughts found',
             })
