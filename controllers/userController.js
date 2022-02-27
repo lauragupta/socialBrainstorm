@@ -1,5 +1,19 @@
 const { User, Thought } = require('../models');
 
+const userThoughtList = async () =>
+  User.aggregate([
+    {
+      $unwind: '$thoughts',
+    }
+  ]);
+
+// const frinedList = async () => 
+//   User.aggregate([
+//   {
+//     $unwind: '$friends',
+//   }
+// ]);
+
 module.exports = {
   // Get all users
   getUsers(req, res) {
@@ -16,8 +30,9 @@ module.exports = {
           ? res.status(404).json({ message: 'No user with that ID' })
           : res.json({
               user,
-              // thought: await thought(req.params.thought_id),
-              // friends: await friends(req.params.id)
+              thoughts: await userThoughtList(req.params.userId),
+              //friends: await getFriends,
+              //friends: await frinedList(req.params.userId),
             })
       )
       .catch((err) => {
@@ -31,7 +46,7 @@ module.exports = {
       .then((user) => res.json(user))
       .catch((err) => res.status(500).json(err));
   },
-  
+
   // Update a user
   updateUser(req, res) {
     User.findOneAndUpdate(
@@ -61,8 +76,8 @@ module.exports = {
       })
       .then((user) =>
         !user.thoughts
-          ? res.status(404).json({
-              message: 'User deleted, but no thoughts found',
+          ? res.status(404).json({ 
+            message: 'User deleted, but no thoughts found',
             })
           : res.json({ message: 'User and Thoughts successfully deleted' })
       )
