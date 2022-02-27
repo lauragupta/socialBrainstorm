@@ -99,10 +99,9 @@ module.exports = {
           : res.json(user)
       )
       .catch((err) => {
-        res.status(500).json(err)
+        res.status(500).json(err);
         console.log(err);
       });
-
   },
    // Remove user friend. 
    removeFriend(req, res) {
