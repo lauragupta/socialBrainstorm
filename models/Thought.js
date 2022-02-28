@@ -19,12 +19,7 @@ const thoughtSchema = new Schema(
       type: String,
       required: true,
     },
-    reactions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'reaction',
-      },
-    ],
+    reactions: [Reaction],
   },
   {
     toJSON: {
@@ -36,6 +31,11 @@ const thoughtSchema = new Schema(
  // Create a virtual property `getReactions` that gets the number of reactions associated with a thought
 thoughtSchema.virtual('getReactions').get(function () {
   return this.reactions.length;
+});
+
+//Virtual property for date
+thoughtSchema.virtual('date').get(function() {
+  return this.createdAt.toDateString('en-US');
 });
 
 // Initialize Thought model

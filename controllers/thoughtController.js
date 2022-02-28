@@ -30,7 +30,7 @@ module.exports = {
       .then((thought) => {
         return User.findOneAndUpdate(
           { _id: req.body.userId },
-          { $addToSet: { thought: thought._id } },
+          { $addToSet: { thoughts: thought.id } },
           { new: true }   
         );
       })
@@ -41,10 +41,13 @@ module.exports = {
           })
         : res.json('Created the thought')
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err)
+        res.status(500).json(err);
+      })
   },
   //Update a thought
-  updateThought(req,res) {
+  updateThought(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       { $set: req.body },
@@ -86,15 +89,18 @@ module.exports = {
   addThoughtReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $addToSet: { reaction: req.body } },
+      { $addToSet: { reactions: req.body } },
       { runValidators: true, new: true }
     )
       .then((thought) =>
         !thought
           ? res.status(404).json({ message: 'No thought with this id!' })
-          : res.json(video)
+          : res.json(thought)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      })
   },
   // Remove thought reaction
   removeThoughtReaction(req, res) {
@@ -106,7 +112,7 @@ module.exports = {
       .then((thought) =>
         !thought
           ? res.status(404).json({ message: 'No thought with this id!' })
-          : res.json(video)
+          : res.json(thought)
       )
       .catch((err) => res.status(500).json(err));
   },
