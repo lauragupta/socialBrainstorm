@@ -24,9 +24,15 @@ const reactionSchema = new Schema(
   {
     toJSON: {
       getters: true,
+      virtuals: true,
     },
     id: false,
   }
 );
+
+//Virtual property for date
+reactionSchema.virtual('date').get(function() {
+  return this.createdAt.toDateString('en-US');
+});
 
 module.exports = reactionSchema;
